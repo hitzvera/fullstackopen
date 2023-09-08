@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 function App() {
-  const course = "Half Stack application development";
-  const parts = [
+  const course = {
+    name: "Half Stack application development",
+    parts: [
     {
       name: "Fundamentals of React",
       exercises: 10,
@@ -14,14 +15,15 @@ function App() {
       name: "State of a component",
       exercises: 14,
     },
-  ];
-
+  ]
+  };
+  
   return (
     <div>
-      <Header course={course} />
-      <Content parts={parts}
+      <Header course={course.name} />
+      <Content parts={course.parts}
       />
-      <Total parts={parts} />
+      <Total parts={course.parts} />
     </div>
   );
 }
