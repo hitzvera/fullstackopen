@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const App = () => {
   const anecdotes = [
@@ -23,21 +23,32 @@ const App = () => {
     6: 0,
     7: 0,
   })
+  const [indexMax, setIndexMax] = useState(0);
+
   const voteHandler = (index) => {
-    console.log("masuk vote handler", index)
     setVotes({
       ...votes,
       [index]: votes[index] + 1
     })
   }
 
+  useEffect(() => {
+    if (votes[selected] > votes[indexMax]) {
+      setIndexMax(selected)
+    }
+  },[votes, selected, indexMax])
+
   return <div>
+    <h1>Anecdote of the day</h1>
     <p>{anecdotes[selected]}</p>
     <p>
       has {votes[selected]} votes
     </p>
     <button onClick={()=>voteHandler(selected)}>vote</button>
-    <button onClick={()=>setSelected(Math.floor(Math.random()*anecdotes.length))}>next anecdote</button>
+    <button onClick={() => setSelected(Math.floor(Math.random() * anecdotes.length))}>next anecdote</button>
+    <h1>Anecdote with most votes</h1>
+    <p>{anecdotes[indexMax]}</p>
+    <p>has {votes[indexMax]} votes</p>
   </div>;
 };
 
