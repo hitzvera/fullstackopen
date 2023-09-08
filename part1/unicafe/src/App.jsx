@@ -1,15 +1,20 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 
+const StatisticsLine = ({ text, value }) => (
+  <p>
+    {text} {value} {text === "positive" && " %"}
+  </p>
+)
+
 const Statistics = (props) => (
   <div>
-    <h1>statistics</h1>
-    <p>good {props.good}</p>
-    <p>neutral {props.neutral}</p>
-    <p>bad {props.bad}</p>
-    <p>all {props.all}</p>
-    <p>average {props.average}</p>
-    <p>positive {props.positive} %</p>
+    <StatisticsLine text="good" value={props.good} />
+    <StatisticsLine text="neutral" value={props.neutral} />
+    <StatisticsLine text="bad" value={props.bad} />
+    <StatisticsLine text="all" value={props.all} />
+    <StatisticsLine text="average" value={props.average} />
+    <StatisticsLine text="positive" value={props.positive} />
   </div>
 );
 
@@ -28,20 +33,20 @@ const App = () => {
       <button onClick={() => setGood(good + 1)}>good</button>
       <button onClick={() => setNeutral(neutral + 1)}>neutral</button>
       <button onClick={() => setBad(bad + 1)}>bad</button>
-      {
-        all !== 0 ? <Statistics
-        good={good}
-        neutral={neutral}
-        bad={bad}
-        all={all}
-        average={average}
-        positive={positive}
-        /> : <div>
-            <h1>statistics</h1>
-            <p>No feedback given</p>
-      </div>
-      }
-      
+      <h1>statistics</h1>
+      {all !== 0 ? (
+        <Statistics
+          good={good}
+          neutral={neutral}
+          bad={bad}
+          all={all}
+          average={average}
+          positive={positive}
+        />
+      ) : (
+          <p>No feedback given</p>
+
+      )}
     </div>
   );
 };
