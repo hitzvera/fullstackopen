@@ -2,20 +2,23 @@
 import { useState } from "react";
 
 const StatisticsLine = ({ text, value }) => (
-  <p>
-    {text} {value} {text === "positive" && " %"}
-  </p>
-)
+  <tr>
+    <td>{text}</td>
+    <td>
+      {value} {text === "positive" && " %"}
+    </td>
+  </tr>
+);
 
 const Statistics = (props) => (
-  <div>
+  <table>
     <StatisticsLine text="good" value={props.good} />
     <StatisticsLine text="neutral" value={props.neutral} />
     <StatisticsLine text="bad" value={props.bad} />
     <StatisticsLine text="all" value={props.all} />
     <StatisticsLine text="average" value={props.average} />
     <StatisticsLine text="positive" value={props.positive} />
-  </div>
+  </table>
 );
 
 const App = () => {
