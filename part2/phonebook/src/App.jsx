@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-key */
 import { useState } from "react";
 
@@ -18,7 +19,9 @@ const App = () => {
 
   const filteredPersons =
     searchKeyword !== ""
-      ? persons.filter((person) => person.name.includes(searchKeyword))
+      ? persons.filter((person) =>
+          person.name.toLowerCase().includes(searchKeyword.toLowerCase())
+        )
       : persons;
 
   const handleNewNumber = (event) => {
@@ -62,29 +65,57 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with <input onChange={(e)=>setSearchKeyword(e.target.value)}/>
-      </div>
+      <Filter filterValue={searchKeyword} setFilterValue={setSearchKeyword} />
       <h2>add a new</h2>
-      <form onSubmit={addPersonHandler}>
-        <div>
-          name: <input onChange={handleNewName} value={newName} />
-        </div>
-        <div>
-          number: <input onChange={handleNewNumber} value={newNumber} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm
+        addPersonHandler={addPersonHandler}
+        handleNewName={handleNewName}
+        newName={newName}
+        handleNewNumber={handleNewNumber}
+        newNumber={newNumber}
+      />
       <h2>Numbers</h2>
-      {filteredPersons.map((person, i) => (
-        <div key={i}>
-          {person.name} {person.number}
-        </div>
-      ))}
+      <Person persons={filteredPersons} />
     </div>
   );
 };
 
+const PersonForm = (props) => {
+  return (
+    <form onSubmit={props.addPersonHandler}>
+      <div>
+        name: <input onChange={props.handleNewName} value={props.newName} />
+      </div>
+      <div>
+        number:{" "}
+        <input onChange={props.handleNewNumber} value={props.newNumber} />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  );
+};
+
+const Person = ({ persons }) => {
+  return (
+    <>
+      {persons.map((person, i) => (
+        <div key={i}>
+          {person.name} {person.number}
+        </div>
+      ))}
+    </>
+  );
+}
+
+const Filter = ({ filterValue, setFilterValue }) => (
+  <div>
+    filter shown with{" "}
+    <input
+      onChange={(e) => setFilterValue(e.target.value)}
+      value={filterValue}
+    />
+  </div>
+);
 export default App;
