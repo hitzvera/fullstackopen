@@ -2,6 +2,7 @@
 /* eslint-disable react/jsx-key */
 import { useEffect, useState } from "react";
 import axios from 'axios'
+import phonebookService from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -11,8 +12,8 @@ const App = () => {
 
 
   useEffect(() => {
-    axios.get('http://localhost:3002/persons').then(response => {
-      setPersons(response.data)
+    phonebookService.getAll().then(persons => {
+      setPersons(persons)
     })
   }, [])
 
