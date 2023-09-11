@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-key */
 import { useEffect, useState } from "react";
-import axios from 'axios'
-import phonebookService from './services/phonebook'
+import axios from "axios";
+import phonebookService from "./services/phonebook";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -10,12 +10,11 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
 
-
   useEffect(() => {
-    phonebookService.getAll().then(persons => {
-      setPersons(persons)
-    })
-  }, [])
+    phonebookService.getAll().then((persons) => {
+      setPersons(persons);
+    });
+  }, []);
 
   const handleNewName = (event) => {
     setNewName(event.target.value);
@@ -33,21 +32,30 @@ const App = () => {
   };
 
   const compareObject = (first, second) => {
-    // getting all properties names
+    // Getting all property names
     const al = Object.getOwnPropertyNames(first);
     const bl = Object.getOwnPropertyNames(second);
 
-    if (al.length !== bl.length) return false;
+    // Remove "id" property from the property names arrays
+    const filteredAl = al.filter((prop) => prop !== "id");
+    const filteredBl = bl.filter((prop) => prop !== "id");
 
-    // check if every al and bl have the same properties
-    const hasAllKeys = al.every((value) => !!bl.find((v) => v === value));
+    if (filteredAl.length !== filteredBl.length) return false;
+
+    // Check if every filteredAl and filteredBl have the same properties
+    const hasAllKeys = filteredAl.every((value) => filteredBl.includes(value));
     if (!hasAllKeys) return false;
 
-    // checking for every value of properties
-    for (const key of al) if (first[key] !== second[key]) return false;
+    // Checking for every value of properties (except "id")
+    for (const key of filteredAl) {
+      if (first[key] !== second[key]) {
+        return false;
+      }
+    }
 
     return true;
   };
+
 
   const addPersonHandler = (event) => {
     event.preventDefault();
@@ -60,9 +68,16 @@ const App = () => {
       // down side is when the number is same this alert still will be displayed
       alert(`${newName} is already added to phonebook`);
     } else {
-      setPersons([...persons, newObject]);
-      setNewName("");
-      setNewNumber("");
+      phonebookService
+        .addPhoneBook(newObject)
+        .then((returendData) => {
+          setPersons([...persons, returendData]);
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          alert(`some error is happening, error: ${error.message} `);
+        });
     }
   };
 
