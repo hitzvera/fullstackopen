@@ -14,7 +14,7 @@ const App = () => {
     phonebookService.getAll().then((persons) => {
       setPersons(persons);
     });
-  }, []);
+  }, [persons]);
 
   const handleNewName = (event) => {
     setNewName(event.target.value);
@@ -56,7 +56,6 @@ const App = () => {
     return true;
   };
 
-
   const addPersonHandler = (event) => {
     event.preventDefault();
     const newObject = {
@@ -81,6 +80,14 @@ const App = () => {
     }
   };
 
+  const handleDeleteButton = (id, name) => {
+    if (window.confirm(`Delete ${name} ?`)) {
+      phonebookService
+        .deletePhonebook(id)
+        .then((returendData) => console.log(`sukses ${returendData.toString()}`));
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -94,7 +101,10 @@ const App = () => {
         newNumber={newNumber}
       />
       <h2>Numbers</h2>
-      <Person persons={filteredPersons} />
+      <Person
+        persons={filteredPersons}
+        handleDeleteButton={handleDeleteButton}
+      />
     </div>
   );
 };
@@ -116,12 +126,13 @@ const PersonForm = (props) => {
   );
 };
 
-const Person = ({ persons }) => {
+const Person = ({ persons, handleDeleteButton }) => {
   return (
     <>
       {persons.map((person, i) => (
         <div key={i}>
-          {person.name} {person.number}
+          {person.name} {person.number}{" "}
+          <button onClick={()=>handleDeleteButton(person.id, person.name)}>delete</button>
         </div>
       ))}
     </>
