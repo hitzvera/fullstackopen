@@ -12,12 +12,14 @@ const StatisticsLine = ({ text, value }) => (
 
 const Statistics = (props) => (
   <table>
-    <StatisticsLine text="good" value={props.good} />
-    <StatisticsLine text="neutral" value={props.neutral} />
-    <StatisticsLine text="bad" value={props.bad} />
-    <StatisticsLine text="all" value={props.all} />
-    <StatisticsLine text="average" value={props.average} />
-    <StatisticsLine text="positive" value={props.positive} />
+    <tbody>
+      <StatisticsLine text="good" value={props.good} />
+      <StatisticsLine text="neutral" value={props.neutral} />
+      <StatisticsLine text="bad" value={props.bad} />
+      <StatisticsLine text="all" value={props.all} />
+      <StatisticsLine text="average" value={props.average} />
+      <StatisticsLine text="positive" value={props.positive} />
+    </tbody>
   </table>
 );
 
