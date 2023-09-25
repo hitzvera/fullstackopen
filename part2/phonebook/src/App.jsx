@@ -1,23 +1,26 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-key */
 import { useEffect, useState } from "react";
-import axios from "axios";
 import phonebookService from "./services/phonebook";
+import Notification from "./Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     phonebookService.getAll().then((persons) => {
       setPersons(persons);
     });
-  }, [persons]);
+  }, []);
 
-  const handleNewName = (event) => {
-    setNewName(event.target.value);
+  const handleNameInputChange = (event) => {
+    const inputValue = event.target.value;
+    setNewName(inputValue);
   };
 
   const filteredPersons =
@@ -27,10 +30,17 @@ const App = () => {
         )
       : persons;
 
-  const handleNewNumber = (event) => {
-    setNewNumber(event.target.value);
+  const handleNumberInputChange = (event) => {
+    const inputValue = event.target.value;
+    setNewNumber(inputValue);
   };
 
+  /**
+   * Compare two objects and check if they have the same properties and values (except "id").
+   * @param {object} first - The first object to compare.
+   * @param {object} second - The second object to compare.
+   * @returns {boolean} - True if the objects are equal, false otherwise.
+   */
   const compareObject = (first, second) => {
     // Getting all property names
     const al = Object.getOwnPropertyNames(first);
@@ -73,8 +83,15 @@ const App = () => {
           setPersons([...persons, returendData]);
           setNewName("");
           setNewNumber("");
+
+          setIsError(false);
+          setSuccessMessage(`${newName} has been added to phonebook`);
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 5000);
         })
         .catch((error) => {
+          setIsError(true);
           alert(`some error is happening, error: ${error.message} `);
         });
     }
@@ -84,20 +101,27 @@ const App = () => {
     if (window.confirm(`Delete ${name} ?`)) {
       phonebookService
         .deletePhonebook(id)
-        .then((returendData) => console.log(`sukses ${returendData.toString()}`));
+        .then((returendData) =>
+          console.log(`sukses ${returendData.toString()}`)
+        )
+        .catch((err) => {
+          setIsError(true);
+          setSuccessMessage(err.message);
+        });
     }
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage} isError={isError} />
       <Filter filterValue={searchKeyword} setFilterValue={setSearchKeyword} />
       <h2>add a new</h2>
       <PersonForm
         addPersonHandler={addPersonHandler}
-        handleNewName={handleNewName}
+        handleNewName={handleNameInputChange}
         newName={newName}
-        handleNewNumber={handleNewNumber}
+        handleNewNumber={handleNumberInputChange}
         newNumber={newNumber}
       />
       <h2>Numbers</h2>
@@ -132,7 +156,9 @@ const Person = ({ persons, handleDeleteButton }) => {
       {persons.map((person, i) => (
         <div key={i}>
           {person.name} {person.number}{" "}
-          <button onClick={()=>handleDeleteButton(person.id, person.name)}>delete</button>
+          <button onClick={() => handleDeleteButton(person.id, person.name)}>
+            delete
+          </button>
         </div>
       ))}
     </>
