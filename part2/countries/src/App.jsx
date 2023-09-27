@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { getCountries } from "./services/countriesServices";
+import { getWeather } from "./services/wetherServices";
 
 function App() {
   const [countries, setCountries] = useState([]);
   const [filteredCountries, setFilteredCountries] = useState([]);
   const [searchValue, setSearchValue] = useState("");
+  const [weather, setWeather] = useState({});
 
   useEffect(() => {
     getCountries().then((result) => {
@@ -21,6 +23,11 @@ function App() {
         country.name.common.toLowerCase().includes(searchValue.toLowerCase())
       );
       setFilteredCountries(filteredCountries);
+      const fetchData = async () => {
+        const result = await getWeather(searchValue);
+        setWeather(result);
+      };
+      fetchData();
     }
   }, [countries, searchValue]);
 
@@ -30,6 +37,16 @@ function App() {
       setFilteredCountries([]);
     }
     setSearchValue(inputValue);
+  };
+
+  const weatherOfCountry = async (country) => {
+    try {
+      const data = await getWeather(country);
+      setWeather(data);
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   };
 
   return (
@@ -54,17 +71,24 @@ function App() {
           </p>
           <h3>languages:</h3>
           <ul>
-            {
-              Object.entries(filteredCountries[0].languages).map(([key, value]) => {
+            {Object.entries(filteredCountries[0].languages).map(
+              ([key, value]) => {
                 return <li key={key}>{value}</li>;
-              })
-            }
+              }
+            )}
           </ul>
           <img
             src={filteredCountries[0].flags.png}
             alt={filteredCountries[0].flags.alt}
             width={150}
           />
+          <h2>Weather in Helsinki</h2>
+          <p>temperature {weather.main.temp} Celcius</p>
+          <img
+            src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+            alt=""
+          />
+          <p>wind {weather.wind.speed} m/s</p>
         </div>
       ) : (
         <div>
