@@ -6,7 +6,7 @@ function App() {
   const [countries, setCountries] = useState([]);
   const [filteredCountries, setFilteredCountries] = useState([]);
   const [searchValue, setSearchValue] = useState("");
-  const [weather, setWeather] = useState({});
+  const [weather, setWeather] = useState(null);
 
   useEffect(() => {
     getCountries().then((result) => {
@@ -23,11 +23,14 @@ function App() {
         country.name.common.toLowerCase().includes(searchValue.toLowerCase())
       );
       setFilteredCountries(filteredCountries);
-      const fetchData = async () => {
-        const result = await getWeather(searchValue);
-        setWeather(result);
-      };
-      fetchData();
+      if (filteredCountries.length === 1) {
+         const fetchData = async () => {
+           const result = await getWeather(filteredCountries[0].name.common);
+           setWeather(result);
+         };
+         fetchData();
+      }
+     
     }
   }, [countries, searchValue]);
 
@@ -37,16 +40,6 @@ function App() {
       setFilteredCountries([]);
     }
     setSearchValue(inputValue);
-  };
-
-  const weatherOfCountry = async (country) => {
-    try {
-      const data = await getWeather(country);
-      setWeather(data);
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
   };
 
   return (
@@ -61,7 +54,7 @@ function App() {
           onChange={handleCountryInputChange}
         />
       </div>
-      {filteredCountries.length === 1 ? (
+      {filteredCountries.length === 1 && weather ? (
         <div>
           <h2>{filteredCountries[0].name.common}</h2>
           <p>
